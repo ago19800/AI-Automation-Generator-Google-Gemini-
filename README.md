@@ -459,7 +459,7 @@ Questo progetto è rilasciato sotto licenza **MIT**. Vedi `LICENSE` per dettagli
 
 ## ❤️ Credits
 
-**Progettato con ❤️ da [ago1980](https://github.com/ago1980)**
+**Progettato con ❤️ da [ago19800](https://github.com/ago19800)**
 
 ### Tecnologie
 
@@ -481,8 +481,8 @@ Grazie a:
 
 Hai problemi o domande?
 
-- 🐛 **Bug Report**: [GitHub Issues](https://github.com/ago1980/ha-ai-automation-generator/issues)
-- 💬 **Discussioni**: [GitHub Discussions](https://github.com/ago1980/ha-ai-automation-generator/discussions)
+- 🐛 **Bug Report**: [GitHub Issues](https://github.com/ago19800/ha-ai-automation-generator/issues)
+- 💬 **Discussioni**: [GitHub Discussions](https://github.com/ago19800/ha-ai-automation-generator/discussions)
 - ⭐ **Metti una stella** se ti piace!
 
 ---
