@@ -1,6 +1,6 @@
 name: "AI Automation Generator (Google Gemini)"
 version: "2.3.0"
-slug: ai_automation_generator_google
+slug: gemini-ai
 description: "Genera automazioni per Home Assistant usando Google Gemini AI - Dual Mode: Sidebar + Porta Diretta"
 url: "https://github.com/tuousername/ha-automation-ai"
 arch:
