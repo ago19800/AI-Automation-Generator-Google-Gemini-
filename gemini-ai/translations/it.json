@@ -1,0 +1,12 @@
+{
+  "configuration": {
+    "google_api_key": {
+      "name": "Chiave API Google",
+      "description": "Chiave API di Google AI Studio (Gemini) - GRATUITA! Ottienila da: https://aistudio.google.com/apikey"
+    },
+    "password": {
+      "name": "Password",
+      "description": "Password per proteggere l'accesso. Lascia vuoto per disabilitare l'autenticazione."
+    }
+  }
+}

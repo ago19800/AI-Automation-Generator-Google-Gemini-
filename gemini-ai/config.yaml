@@ -1,0 +1,31 @@
+name: "AI Automation Generator (Google Gemini)"
+version: "2.3.0"
+slug: ai_automation_generator_google
+description: "Genera automazioni per Home Assistant usando Google Gemini AI - Dual Mode: Sidebar + Porta Diretta"
+url: "https://github.com/tuousername/ha-automation-ai"
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+init: false
+startup: application
+boot: auto
+ingress: true
+panel_icon: mdi:robot-excited
+panel_title: AI Automation
+ports:
+  8099/tcp: 8099
+ports_description:
+  8099/tcp: "Accesso diretto HTTP (opzionale)"
+webui: "http://[HOST]:[PORT:8099]"
+options:
+  google_api_key: ""
+  password: ""
+schema:
+  google_api_key: str
+  password: str
+homeassistant_api: true
+hassio_api: true
+hassio_role: default

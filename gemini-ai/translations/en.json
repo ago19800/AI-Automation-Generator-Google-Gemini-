@@ -1,0 +1,12 @@
+{
+  "configuration": {
+    "google_api_key": {
+      "name": "Google API Key",
+      "description": "Google AI Studio API key (Gemini) - FREE! Get it from: https://aistudio.google.com/apikey"
+    },
+    "password": {
+      "name": "Password",
+      "description": "Password to protect access. Leave empty to disable authentication."
+    }
+  }
+}
