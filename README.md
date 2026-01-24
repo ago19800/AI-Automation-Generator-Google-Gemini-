@@ -127,7 +127,7 @@ Google Gemini offre una **quota gratuita generosa**:
    - Click **⋮** (tre puntini) → **Repositories**
    - Aggiungi:
      ```
-     https://github.com/ago1980/ha-ai-automation-generator
+     https://github.com/ago19800/AI-Automation-Generator-Google-Gemini-
      ```
    - Click **"Aggiungi"**
 
