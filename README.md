@@ -481,8 +481,7 @@ Grazie a:
 
 Hai problemi o domande?
 
-- 🐛 **Bug Report**: [GitHub Issues](https://github.com/ago19800/ha-ai-automation-generator/issues)
-- 💬 **Discussioni**: [GitHub Discussions](https://github.com/ago19800/ha-ai-automation-generator/discussions)
+
 - ⭐ **Metti una stella** se ti piace!
 
 ---
