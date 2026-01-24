@@ -100,14 +100,14 @@ Estrai lo ZIP e carica tutto in:
 
 **URL tipo:**
 ```
-https://casago1980.duckdns.org/api/hassio_ingress/TOKEN/
+https://casaxxxx.duckdns.org/api/hassio_ingress/TOKEN/
 ```
 
 ### MODO 2: Via Porta Diretta :8099 ✅
 
 Apri browser e vai a:
 ```
-http://casago1980.duckdns.org:8099
+http://casaxxxxx.duckdns.org:8099
 ```
 
 Oppure:
