@@ -110,7 +110,7 @@
 3. Click **Repositories**
 4. Aggiungi questo URL:
    ```
-   https://github.com/ago1980/ha-ai-automation-builder
+   https://github.com/ago19800/AI-Automation-Generator-Google-Gemini-
    ```
 5. Click **ADD**
 
