@@ -685,9 +685,6 @@ I contributi sono benvenuti!
 
 ### Hai bisogno di aiuto?
 
-- 📖 **Documentazione:** Leggi questa guida
-- 🐛 **Bug Report:** [GitHub Issues](https://github.com/ago19800/ha-ai-automation-builder/issues)
-- 💬 **Discussioni:** [GitHub Discussions](https://github.com/ago19800/ha-ai-automation-builder/discussions)
 - ☕ **Supporto:** [PayPal](https://paypal.me/ago19800)
 
 ---
