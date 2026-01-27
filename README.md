@@ -1,6 +1,6 @@
 # 🤖 AI Automation Generator for Home Assistant
 
-[![GitHub](https://img.shields.io/badge/GitHub-ago1980-blue?logo=github)](https://github.com/ago1980)
+[![GitHub](https://img.shields.io/badge/GitHub-ago1980-blue?logo=github)](https://github.com/ago19800)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue?logo=homeassistant)](https://www.home-assistant.io/)
 [![Version](https://img.shields.io/badge/version-2.7.2-green.svg)](https://github.com/ago1980/ha-ai-automation-builder)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -686,8 +686,8 @@ I contributi sono benvenuti!
 ### Hai bisogno di aiuto?
 
 - 📖 **Documentazione:** Leggi questa guida
-- 🐛 **Bug Report:** [GitHub Issues](https://github.com/ago1980/ha-ai-automation-builder/issues)
-- 💬 **Discussioni:** [GitHub Discussions](https://github.com/ago1980/ha-ai-automation-builder/discussions)
+- 🐛 **Bug Report:** [GitHub Issues](https://github.com/ago19800/ha-ai-automation-builder/issues)
+- 💬 **Discussioni:** [GitHub Discussions](https://github.com/ago19800/ha-ai-automation-builder/discussions)
 - ☕ **Supporto:** [PayPal](https://paypal.me/ago19800)
 
 ---
@@ -730,13 +730,13 @@ Ogni donazione, anche piccola, mi aiuta a:
 
 <div align="center">
 
-**Made with ❤️ by [ago1980](https://github.com/ago1980)**
+**Made with ❤️ by [ago1980](https://github.com/ago19800)**
 
 **Powered by Google Gemini AI**
 
 **For Home Assistant Community**
 
-[![GitHub](https://img.shields.io/badge/GitHub-ago1980-blue?logo=github&style=for-the-badge)](https://github.com/ago1980)
+[![GitHub](https://img.shields.io/badge/GitHub-ago1980-blue?logo=github&style=for-the-badge)](https://github.com/ago19800)
 [![PayPal](https://img.shields.io/badge/PayPal-Dona-blue?logo=paypal&style=for-the-badge)](https://paypal.me/ago19800)
 
 </div>
