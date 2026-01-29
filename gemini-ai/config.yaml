@@ -2,7 +2,7 @@ name: AI Automation Generator (Google)
 version: "2.7.3"
 slug: gemini-ai
 description: Genera automazioni con AI - Senza password! 🔓
-url: https://github.com/ago1980/ha-ai-automation-builder
+url: https://github.com/ago19800/AI-Automation-Generator-Google-Gemini-
 arch:
   - armhf
   - armv7
