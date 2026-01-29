@@ -1,0 +1,25 @@
+name: AI Automation Generator (Google)
+version: "2.7.3"
+slug: gemini-ai
+description: Genera automazioni con AI - Senza password! 🔓
+url: https://github.com/ago1980/ha-ai-automation-builder
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+init: false
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:robot
+panel_title: AI Automation
+homeassistant_api: true
+hassio_api: true
+hassio_role: manager
+ports:
+  8099/tcp: null
+options:
+  google_api_key: ""
+schema:
+  google_api_key: str
