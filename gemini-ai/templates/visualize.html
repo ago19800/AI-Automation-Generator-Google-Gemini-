@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Automation Vision</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d1b4e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d9ff 0%, #7b2cbf 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a0a0b0;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+        }
+
+        .graph-panel {
+            background: rgba(20, 25, 40, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 700px;
+        }
+
+        .info-panel {
+            background: rgba(20, 25, 40, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            max-height: 700px;
+        }
+
+        #network {
+            width: 100%;
+            height: 650px;
+            border-radius: 15px;
+            background: rgba(10, 14, 26, 0.9);
+            border: 2px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 217, 255, 0.4);
+        }
+
+        .control-btn.secondary {
+            background: linear-gradient(135deg, #7b2cbf 0%, #5a1f8c 100%);
+        }
+
+        .control-btn.test {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+        }
+
+        .control-btn.execute {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        }
+
+        .control-btn.install {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+            font-weight: 700;
+        }
+
+        .control-btn.install.disabled {
+            background: linear-gradient(135deg, #666 0%, #444 100%);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .control-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .analysis-section {
+            margin-bottom: 25px;
+        }
+
+        .analysis-section h3 {
+            color: #00d9ff;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .analysis-section p {
+            color: #a0a0b0;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .analysis-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .analysis-list li {
+            padding: 10px;
+            background: rgba(0, 217, 255, 0.1);
+            border-left: 3px solid #00d9ff;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            color: #e0e0e0;
+        }
+
+        .analysis-list li::before {
+            content: '▶ ';
+            color: #00d9ff;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .analysis-list.errors li {
+            background: rgba(255, 77, 77, 0.1);
+            border-left-color: #ff4d4d;
+        }
+
+        .analysis-list.errors li::before {
+            content: '❌ ';
+        }
+
+        .analysis-list.warnings li {
+            background: rgba(255, 159, 67, 0.1);
+            border-left-color: #ff9f43;
+        }
+
+        .analysis-list.warnings li::before {
+            content: '⚠️ ';
+        }
+
+        .analysis-list.success li {
+            background: rgba(81, 207, 102, 0.1);
+            border-left-color: #51cf66;
+        }
+
+        .analysis-list.success li::before {
+            content: '✅ ';
+        }
+
+        .node-details {
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .node-details h4 {
+            color: #00d9ff;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .node-details pre {
+            background: rgba(10, 14, 26, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            color: #a0a0b0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 50, 50, 0.2);
+            border: 1px solid rgba(255, 50, 50, 0.5);
+            border-radius: 8px;
+            color: #ff6b6b;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 50, 50, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #00d9ff;
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 217, 255, 0.1);
+            border-top: 4px solid #00d9ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .test-result {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .test-result.success {
+            background: rgba(81, 207, 102, 0.1);
+            border: 2px solid #51cf66;
+            color: #51cf66;
+        }
+
+        .test-result.error {
+            background: rgba(255, 77, 77, 0.1);
+            border: 2px solid #ff4d4d;
+            color: #ff4d4d;
+        }
+
+        .test-result.warning {
+            background: rgba(255, 159, 67, 0.1);
+            border: 2px solid #ff9f43;
+            color: #ff9f43;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    
+        /* YAML EDITOR MODAL */
+        .yaml-editor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .yaml-editor.show {
+            display: flex;
+        }
+
+        .yaml-editor-content {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d1b4e 100%);
+            width: 95%;
+            max-width: 1100px;
+            max-height: 95vh;
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 20px 80px rgba(0, 217, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .yaml-editor-content h2 {
+            color: #00d9ff;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .yaml-editor-content p {
+            color: #a0a0b0;
+            margin-bottom: 25px;
+        }
+
+        #yaml-textarea {
+            flex: 1;
+            width: 100%;
+            min-height: 400px;
+            max-height: 60vh;
+            background: rgba(10, 14, 26, 0.95);
+            color: #51cf66;
+            font-family: 'Courier New', 'Consolas', monospace;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            resize: none;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        #yaml-textarea:focus {
+            outline: none;
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+    
+        /* RESPONSIVE per Mobile */
+        @media (max-width: 768px) {
+            .yaml-editor-content {
+                width: 98%;
+                max-height: 98vh;
+                padding: 15px;
+            }
+            
+            .yaml-editor-content h2 {
+                font-size: 1.5em;
+                margin-bottom: 8px;
+            }
+            
+            .yaml-editor-content p {
+                font-size: 0.85em;
+                margin-bottom: 15px;
+            }
+            
+            #yaml-textarea {
+                font-size: 13px;
+                padding: 15px;
+                min-height: 300px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <a href="./" class="back-btn">← Torna Indietro</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Automation Vision</h1>
+            <p>Visualizza e testa le tue automazioni come non le hai mai viste!</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Caricamento automazione...</p>
+        </div>
+
+        <div id="main-content" class="main-content" style="display: none;">
+            <div class="graph-panel">
+                <div class="controls">
+                    <button class="control-btn" onclick="fitNetwork()">📐 Adatta Vista</button>
+                    <button class="control-btn secondary" onclick="openYamlEditor()">📝 Editor YAML</button>
+                    <button class="control-btn test" onclick="testAutomation()">🧪 Testa Automazione</button>
+                    <button class="control-btn execute" onclick="executeAutomation()">▶️ Esegui Automazione</button>
+                    <button class="control-btn install disabled" id="installBtn" onclick="installAutomation()">💾 Installa in HA</button>
+                    <button class="control-btn secondary" onclick="debugAutomations()">🔍 Debug Installazione</button>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4caf50;"></div>
+                        <span>Start/End</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #FF9800;"></div>
+                        <span>Trigger</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2196F3;"></div>
+                        <span>Condition</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #9C27B0;"></div>
+                        <span>Action</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00BCD4;"></div>
+                        <span>Logic</span>
+                    </div>
+                </div>
+
+                <div id="network"></div>
+            </div>
+
+            <div class="info-panel">
+                <div id="test-results"></div>
+                <div id="ai-analysis"></div>
+                <div id="node-info"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let network = null;
+        let physicsEnabled = true;
+        let graphData = null;
+        let automationYAML = '';
+        let testResults = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            automationYAML = localStorage.getItem('automation_for_vision');
+            if (!automationYAML) {
+                alert('Nessuna automazione trovata!');
+                window.location.href = './';
+                return;
+            }
+
+            try {
+                const response = await fetch('./api/visualize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ automation: automationYAML })
+                });
+
+                if (response.status === 401) {
+                    window.location.href = './login';
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.graph && data.graph.nodes) {
+                    graphData = data.graph;
+                    renderGraph(graphData);
+                    renderAnalysis(data.analysis, graphData.info);
+                    
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'grid';
+                } else {
+                    throw new Error(data.error || 'Errore parsing automazione');
+                }
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <h2 style="color: #ff4d4d;">Errore</h2>
+                    <p>${error.message}</p>
+                    <p><a href="./" style="color: #00d9ff;">Torna Indietro</a></p>
+                `;
+            }
+        });
+
+        async function debugAutomations() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = '<div class="test-result"><h2>🔍 Analisi Sistema in corso...</h2></div>';
+            
+            try {
+                const response = await fetch('./api/debug_automations', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+                
+                let html = `
+                    <div class="test-result success">
+                        <h2>🔍 DIAGNOSTICA SISTEMA</h2>
+                    </div>
+                `;
+                
+                // Metodo di installazione
+                html += `
+                    <div class="analysis-section">
+                        <h3>⚙️ Metodo di Installazione</h3>
+                        <ul class="analysis-list success">
+                            <li>✅ <strong>API Home Assistant</strong> - Metodo principale</li>
+                            <li>✅ Le automazioni vengono create tramite chiamate API REST</li>
+                            <li>✅ Home Assistant le salva automaticamente</li>
+                            <li>✅ Non richiede accesso diretto al filesystem</li>
+                        </ul>
+                    </div>
+                `;
+                
+                // Automazioni in HA
+                if (result.ha_automations) {
+                    html += `
+                        <div class="analysis-section">
+                            <h3>🤖 Automazioni in Home Assistant</h3>
+                            <ul class="analysis-list success">
+                                <li><strong>Totale automazioni attive:</strong> ${result.ha_automations.count || 0}</li>
+                    `;
+                    if (result.ha_automations.list && result.ha_automations.list.length > 0) {
+                        html += `<li><strong>Ultime 10 automazioni:</strong></li>`;
+                        result.ha_automations.list.forEach(name => {
+                            html += `<li style="margin-left: 20px;">• ${name}</li>`;
+                        });
+                    }
+                    html += `</ul></div>`;
+                }
+                
+                // Status funzionamento
+                const automationsCount = result.ha_automations ? result.ha_automations.count : 0;
+                if (automationsCount > 0) {
+                    html += `
+                        <div class="analysis-section">
+                            <h3>✅ Stato Funzionamento</h3>
+                            <ul class="analysis-list success">
+                                <li>✅ <strong>${automationsCount} automazioni</strong> presenti in Home Assistant</li>
+                                <li>✅ Installazione tramite API funzionante</li>
+                                <li>✅ Sistema operativo correttamente</li>
+                                <li>✅ Tutte le automazioni installate sono visibili in Settings → Automations</li>
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="analysis-section">
+                            <h3>ℹ️ Informazioni</h3>
+                            <ul class="analysis-list">
+                                <li>Nessuna automazione trovata in Home Assistant</li>
+                                <li>Il sistema è pronto per creare nuove automazioni</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+                
+                // Info tecnica avanzata (collassabile)
+                html += `
+                    <div class="analysis-section">
+                        <h3 style="cursor: pointer;" onclick="document.getElementById('tech-details').style.display = document.getElementById('tech-details').style.display === 'none' ? 'block' : 'none'">
+                            🔧 Dettagli Tecnici Avanzati <span style="font-size: 0.8em;">(click per espandere)</span>
+                        </h3>
+                        <div id="tech-details" style="display: none;">
+                            <p style="color: #a0a0b0; margin: 10px 0;">
+                                L'addon può accedere al filesystem container ma non necessita di accesso al filesystem di Home Assistant.
+                            </p>
+                            <ul class="analysis-list" style="color: #666;">
+                                <li><strong>Percorsi filesystem container:</strong></li>
+                `;
+                
+                result.paths_checked.forEach(p => {
+                    const icon = p.exists ? '✅' : '⚪';
+                    const status = p.exists ? `Presente (${p.size} bytes)` : 'Non montato (normale)';
+                    html += `<li style="margin-left: 20px; color: #666;">${icon} ${p.path} - ${status}</li>`;
+                });
+                
+                html += `
+                            </ul>
+                            <p style="color: #a0a0b0; margin: 10px 0;">
+                                <strong>Nota:</strong> L'assenza di file nel container è normale e prevista. 
+                                L'addon comunica con Home Assistant tramite API, non tramite accesso diretto ai file.
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                // Conclusione positiva
+                if (automationsCount > 0) {
+                    html += `
+                        <div class="analysis-section">
+                            <h3>🎉 Conclusione</h3>
+                            <p style="color: #51cf66; font-size: 1.1em; font-weight: 600;">
+                                ✅ Sistema funzionante al 100%!
+                            </p>
+                            <p style="color: #a0a0b0;">
+                                L'addon sta funzionando correttamente. Tutte le automazioni create vengono salvate 
+                                in Home Assistant e sono visibili in Settings → Automations & Scenes.
+                            </p>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="test-result error">
+                        ❌ ERRORE DIAGNOSTICA
+                    </div>
+                    <div class="analysis-section">
+                        <h3>Errore</h3>
+                        <p style="color: #ff4d4d;">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function installAutomation() {
+            const installBtn = document.getElementById('installBtn');
+            
+            // Controlla se il pulsante è abilitato
+            if (installBtn.classList.contains('disabled')) {
+                // Controlla se il test è stato fatto
+                if (!testResults || Object.keys(testResults).length === 0) {
+                    alert('⚠️ PRIMA DI INSTALLARE:\n\n1. Devi TESTARE l\'automazione (🧪 Testa Automazione)\n2. Il test deve essere TUTTO VERDE ✅\n3. Nessun errore di entità o servizi\n\nSolo con validazione OK puoi installare!');
+                } else if (testResults.errors && testResults.errors.length > 0) {
+                    const errorList = testResults.errors.join('\n• ');
+                    alert(`⚠️ NON PUOI INSTALLARE!\n\nCi sono ERRORI nell'automazione:\n\n• ${errorList}\n\nCorreggi gli errori e testa di nuovo prima di installare!`);
+                } else {
+                    alert('⚠️ Prima di installare devi:\n\n1. Testare l\'automazione (🧪 Testa)\n2. Assicurarti che sia TUTTO VERDE ✅\n\nSolo con validazione OK puoi installare!');
+                }
+                return;
+            }
+            
+            // Conferma installazione
+            if (!confirm('💾 INSTALLAZIONE IN HOME ASSISTANT\n\nQuesta operazione:\n✅ Scriverà l\'automazione in automations.yaml\n✅ Ricaricherà le automazioni\n✅ L\'automazione sarà ATTIVA\n\nSei sicuro di voler continuare?')) {
+                return;
+            }
+            
+            installBtn.classList.add('disabled');
+            installBtn.textContent = '⏳ Installazione...';
+
+            try {
+                const response = await fetch('./api/install', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ automation: automationYAML })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Successo!
+                    displayInstallSuccess(result);
+                } else {
+                    // Errore
+                    displayInstallError(result);
+                }
+
+            } catch (error) {
+                displayInstallError({ error: error.message });
+            } finally {
+                installBtn.classList.remove('disabled');
+                installBtn.textContent = '💾 Installa in HA';
+            }
+        }
+
+        function displayInstallSuccess(result) {
+            const container = document.getElementById('test-results');
+            
+            const reloaded = result.reloaded || false;
+            const note = result.note || '';
+            
+            let html = `
+                <div class="test-result success">
+                    ✅ AUTOMAZIONE ${reloaded ? 'INSTALLATA' : 'SCRITTA'} CON SUCCESSO!
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>💾 Installazione Completata</h3>
+                    <ul class="analysis-list success">
+                        <li>Automazione "${result.alias}" scritta in automations.yaml</li>
+                        ${reloaded ? '<li>Automazioni ricaricate automaticamente</li>' : '<li>File scritto correttamente</li>'}
+                        ${result.id ? `<li>ID: ${result.id}</li>` : ''}
+                    </ul>
+                </div>
+            `;
+            
+            if (!reloaded || note) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>⚠️ Ricarica Manuale Necessaria</h3>
+                        <p style="color: #ff9f43; margin-bottom: 15px;">
+                            ${note || 'Il reload automatico potrebbe non aver funzionato.'}
+                        </p>
+                        <ul class="analysis-list warnings">
+                            <li>Vai in <strong>Settings → Automations & Scenes</strong></li>
+                            <li>Click sui 3 puntini <strong>⋮</strong> in alto a destra</li>
+                            <li>Click <strong>"Reload automations"</strong></li>
+                            <li>Oppure: <strong>Riavvia Home Assistant</strong></li>
+                            <li>Poi fai <strong>F5</strong> sulla pagina Automations</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="analysis-section">
+                    <h3>🎯 Verifica Automazione</h3>
+                    <ul class="analysis-list">
+                        <li>Vai in <strong>Settings → Automations & Scenes</strong></li>
+                        <li>Cerca "${result.alias}"</li>
+                        <li>Se non la vedi subito, fai <strong>F5</strong> per ricaricare</li>
+                        <li>Dovrebbe essere presente e ${reloaded ? 'ATTIVA' : 'pronta da attivare'}!</li>
+                    </ul>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function displayInstallError(result) {
+            const container = document.getElementById('test-results');
+            
+            let errorMsg = result.error || 'Errore sconosciuto';
+            let workaround = result.workaround || '';
+            
+            let html = `
+                <div class="test-result error">
+                    ❌ ERRORE INSTALLAZIONE AUTOMATICA
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>❌ Dettagli Errore</h3>
+                    <ul class="analysis-list errors">
+                        <li>${errorMsg}</li>
+                    </ul>
+                </div>
+            `;
+            
+            if (workaround) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>💡 Soluzione Alternativa</h3>
+                        <p style="color: #ff9f43; margin-bottom: 15px;">
+                            ${workaround}
+                        </p>
+                        <button class="control-btn" onclick="copyYAMLToClipboard()" style="margin: 10px 0;">
+                            📋 Copia YAML negli Appunti
+                        </button>
+                        <ul class="analysis-list">
+                            <li>1. Click "📋 Copia YAML"</li>
+                            <li>2. Vai in Settings → Automations & Scenes</li>
+                            <li>3. Click "Add Automation"</li>
+                            <li>4. Click "Skip" (in basso)</li>
+                            <li>5. Click "⋮" → "Edit in YAML"</li>
+                            <li>6. Incolla il YAML copiato</li>
+                            <li>7. Click "SAVE"</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function copyYAMLToClipboard() {
+            navigator.clipboard.writeText(automationYAML).then(() => {
+                alert('✅ YAML copiato negli appunti!\n\nOra vai in Home Assistant:\n1. Settings → Automations\n2. Add Automation → Skip\n3. ⋮ → Edit in YAML\n4. Incolla (Ctrl+V)\n5. SAVE');
+            }).catch(err => {
+                // Fallback per browser vecchi
+                const textarea = document.createElement('textarea');
+                textarea.value = automationYAML;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ YAML copiato! Incollalo in Home Assistant.');
+            });
+        }
+
+        async function executeAutomation() {
+            const executeBtn = document.querySelector('.control-btn.execute');
+            
+            if (!confirm('⚠️ ATTENZIONE!\n\nQuesta operazione ESEGUIRÀ REALMENTE le azioni dell\'automazione (accenderà luci, invierà notifiche, ecc.).\n\nSei sicuro di voler continuare?')) {
+                return;
+            }
+            
+            executeBtn.classList.add('disabled');
+            executeBtn.textContent = '⏳ Esecuzione...';
+
+            try {
+                const response = await fetch('./api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ automation: automationYAML })
+                });
+
+                const result = await response.json();
+
+                // Mostra risultati
+                displayExecutionResults(result);
+
+            } catch (error) {
+                alert('Errore durante l\'esecuzione: ' + error.message);
+            } finally {
+                executeBtn.classList.remove('disabled');
+                executeBtn.textContent = '▶️ Esegui Automazione';
+            }
+        }
+
+        function displayExecutionResults(result) {
+            const container = document.getElementById('test-results');
+            
+            let html = '';
+
+            if (result.success) {
+                html += `
+                    <div class="test-result success">
+                        ✅ AUTOMAZIONE ESEGUITA CON SUCCESSO!
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="test-result error">
+                        ❌ ESECUZIONE COMPLETATA CON ERRORI
+                    </div>
+                `;
+            }
+
+            if (result.results && result.results.length > 0) {
+                html += `<div class="analysis-section">
+                    <h3>📋 Risultati Esecuzione (${result.total_actions} azioni)</h3>
+                    <ul class="analysis-list ${result.success ? 'success' : 'errors'}">`;
+                
+                result.results.forEach(r => {
+                    if (r.success) {
+                        html += `<li style="background: rgba(81, 207, 102, 0.1); border-left-color: #51cf66;">
+                            ✅ ${r.action} → ${r.entity || 'Eseguito'}
+                        </li>`;
+                    } else {
+                        html += `<li style="background: rgba(255, 77, 77, 0.1); border-left-color: #ff4d4d;">
+                            ❌ ${r.action} → Errore: ${r.error}
+                        </li>`;
+                    }
+                });
+                
+                html += `</ul></div>`;
+            }
+
+            html += `
+                <div class="analysis-section">
+                    <h3>💡 Nota</h3>
+                    <p style="color: #a0a0b0;">
+                        Le azioni sono state eseguite REALMENTE nel tuo Home Assistant.
+                        Controlla i tuoi dispositivi per verificare il risultato.
+                    </p>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        async function testAutomation() {
+            const testBtn = document.querySelector('.control-btn.test');
+            const installBtn = document.getElementById('installBtn');
+            
+            testBtn.classList.add('disabled');
+            testBtn.textContent = '⏳ Test in corso...';
+
+            try {
+                const response = await fetch('./api/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ automation: automationYAML })
+                });
+
+                const result = await response.json();
+                testResults = result;
+
+                // Aggiorna colori nodi in base ai risultati
+                updateGraphColors(result);
+
+                // Mostra risultati
+                displayTestResults(result);
+                
+                // ABILITA/DISABILITA pulsante Install
+                // REGOLA: Abilita SOLO se test OK E nessun errore
+                if (result.valid && (!result.errors || result.errors.length === 0)) {
+                    // Test OK E nessun errore → Abilita Install
+                    installBtn.classList.remove('disabled');
+                    installBtn.style.cursor = 'pointer';
+                } else {
+                    // Test FAIL O ci sono errori → Disabilita Install
+                    installBtn.classList.add('disabled');
+                    installBtn.style.cursor = 'not-allowed';
+                }
+
+            } catch (error) {
+                alert('Errore durante il test: ' + error.message);
+                // Test fallito → Disabilita Install
+                installBtn.classList.add('disabled');
+            } finally {
+                testBtn.classList.remove('disabled');
+                testBtn.textContent = '🧪 Testa Automazione';
+            }
+        }
+
+        function updateGraphColors(testResult) {
+            if (!network || !graphData) return;
+
+            const nodes = graphData.nodes;
+            const updates = [];
+
+            nodes.forEach(node => {
+                let color = getOriginalColor(node.type);
+                let borderColor = '#ffffff';
+                
+                // Check se il nodo ha errori o warning
+                const entityId = node.entity_id || '';
+                const service = node.service || '';
+
+                if (testResult.entity_errors && entityId && testResult.entity_errors[entityId]) {
+                    // Errore entità
+                    color = '#ff4d4d';
+                    borderColor = '#ff0000';
+                } else if (testResult.service_errors && service && testResult.service_errors[service]) {
+                    // Errore servizio
+                    color = '#ff9f43';
+                    borderColor = '#ff7f00';
+                } else if (testResult.valid && node.type !== 'start' && node.type !== 'end') {
+                    // Tutto OK - verde chiaro
+                    borderColor = '#51cf66';
+                }
+
+                updates.push({
+                    id: node.id,
+                    color: {
+                        background: color,
+                        border: borderColor,
+                        highlight: {
+                            background: color,
+                            border: '#00d9ff'
+                        }
+                    }
+                });
+            });
+
+            network.body.data.nodes.update(updates);
+        }
+
+        function getOriginalColor(type) {
+            switch(type) {
+                case 'start':
+                case 'end':
+                    return '#4caf50';
+                case 'trigger':
+                    return '#FF9800';
+                case 'condition':
+                    return '#2196F3';
+                case 'action':
+                    return '#9C27B0';
+                case 'logic':
+                    return '#00BCD4';
+                default:
+                    return '#607D8B';
+            }
+        }
+
+        function displayTestResults(result) {
+            const container = document.getElementById('test-results');
+            
+            let html = '';
+
+            if (result.valid) {
+                html += `
+                    <div class="test-result success">
+                        ✅ AUTOMAZIONE VALIDA!
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="test-result error">
+                        ❌ AUTOMAZIONE CON ERRORI!
+                    </div>
+                `;
+            }
+
+            if (result.errors && result.errors.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>❌ Errori Critici</h3>
+                        <ul class="analysis-list errors">
+                            ${result.errors.map(e => `<li>${e}</li>`).join('')}
+                        </ul>
+                        <div style="background: #ff4d4d; color: white; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: 600;">
+                            ⚠️ INSTALLAZIONE BLOCCATA!<br>
+                            <span style="font-weight: 400; font-size: 0.9em;">
+                            Correggi questi errori prima di poter installare l'automazione.
+                            Il pulsante "💾 Installa in HA" rimarrà disabilitato fino alla risoluzione degli errori.
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (result.warnings && result.warnings.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>⚠️ Avvisi</h3>
+                        <ul class="analysis-list warnings">
+                            ${result.warnings.map(w => `<li>${w}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (result.valid && (!result.warnings || result.warnings.length === 0)) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>✅ Tutto OK</h3>
+                        <ul class="analysis-list success">
+                            <li>YAML valido sintatticamente</li>
+                            <li>Tutte le entità esistono</li>
+                            <li>Tutti i servizi disponibili</li>
+                            <li>Pronta per l'installazione!</li>
+                        </ul>
+                        <p style="color: #51cf66; margin-top: 15px; font-weight: 600;">
+                            💾 Puoi ora cliccare "Installa in HA" per installarla automaticamente!
+                        </p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderGraph(graphData) {
+            const nodes = graphData.nodes.map(node => {
+                let color;
+                switch(node.type) {
+                    case 'start':
+                    case 'end':
+                        color = '#4caf50';
+                        break;
+                    case 'trigger':
+                        color = '#FF9800';
+                        break;
+                    case 'condition':
+                        color = '#2196F3';
+                        break;
+                    case 'action':
+                        color = '#9C27B0';
+                        break;
+                    case 'logic':
+                        color = '#00BCD4';
+                        break;
+                    default:
+                        color = '#607D8B';
+                }
+
+                return {
+                    id: node.id,
+                    label: node.label,
+                    title: node.description,
+                    color: {
+                        background: color,
+                        border: '#ffffff',
+                        highlight: {
+                            background: color,
+                            border: '#00d9ff'
+                        }
+                    },
+                    font: {
+                        color: '#ffffff',
+                        size: 14,
+                        face: 'monospace'
+                    },
+                    shape: node.type === 'logic' ? 'diamond' : 'box',
+                    size: 25,
+                    borderWidth: 2,
+                    shadow: {
+                        enabled: true,
+                        color: 'rgba(0, 217, 255, 0.5)',
+                        size: 10,
+                        x: 0,
+                        y: 0
+                    }
+                };
+            });
+
+            const edges = graphData.edges.map(edge => ({
+                from: edge.from,
+                to: edge.to,
+                label: edge.label,
+                arrows: 'to',
+                color: {
+                    color: '#00d9ff',
+                    highlight: '#ff00ff',
+                    opacity: 0.8
+                },
+                font: {
+                    color: '#a0a0b0',
+                    size: 12,
+                    align: 'middle'
+                },
+                width: 2,
+                smooth: {
+                    type: 'cubicBezier',
+                    roundness: 0.5
+                },
+                shadow: {
+                    enabled: true,
+                    color: 'rgba(0, 217, 255, 0.3)',
+                    size: 5
+                }
+            }));
+
+            const container = document.getElementById('network');
+            const data = {
+                nodes: new vis.DataSet(nodes),
+                edges: new vis.DataSet(edges)
+            };
+
+            const options = {
+                layout: {
+                    hierarchical: {
+                        direction: 'UD',
+                        sortMethod: 'directed',
+                        nodeSpacing: 150,
+                        levelSeparation: 200
+                    }
+                },
+                physics: {
+                    enabled: true,
+                    hierarchicalRepulsion: {
+                        centralGravity: 0.0,
+                        springLength: 200,
+                        springConstant: 0.01,
+                        nodeDistance: 200,
+                        damping: 0.09
+                    },
+                    solver: 'hierarchicalRepulsion',
+                    stabilization: {
+                        iterations: 100
+                    }
+                },
+                interaction: {
+                    hover: true,
+                    zoomView: true,
+                    dragView: true
+                },
+                nodes: {
+                    borderWidthSelected: 4
+                }
+            };
+
+            network = new vis.Network(container, data, options);
+
+            // Eventi
+            network.on('click', function(params) {
+                if (params.nodes.length > 0) {
+                    const nodeId = params.nodes[0];
+                    const node = graphData.nodes.find(n => n.id === nodeId);
+                    if (node) {
+                        showNodeDetails(node);
+                    }
+                }
+            });
+
+            // Animazione flow
+            animateFlow(data.edges);
+        }
+
+        function animateFlow(edges) {
+            let step = 0;
+            const totalEdges = edges.length;
+
+            setInterval(() => {
+                edges.forEach((edge, index) => {
+                    const highlight = (index === step % totalEdges);
+                    edges.update({
+                        id: edge.id,
+                        color: {
+                            color: highlight ? '#ff00ff' : '#00d9ff',
+                            opacity: highlight ? 1 : 0.6
+                        },
+                        width: highlight ? 4 : 2
+                    });
+                });
+                step++;
+            }, 1000);
+        }
+
+        function renderAnalysis(analysis, info) {
+            const container = document.getElementById('ai-analysis');
+            
+            let html = `
+                <div class="analysis-section">
+                    <h3>📋 ${info.alias}</h3>
+                    ${info.description ? `<p>${info.description}</p>` : ''}
+                    <p style="color: #666; font-size: 0.9em;">Mode: ${info.mode}</p>
+                </div>
+            `;
+
+            if (analysis.summary) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>🧠 Cosa Fa</h3>
+                        <p>${analysis.summary}</p>
+                    </div>
+                `;
+            }
+
+            if (analysis.triggers && analysis.triggers.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>⏰ Quando Si Attiva</h3>
+                        <ul class="analysis-list">
+                            ${analysis.triggers.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (analysis.conditions && analysis.conditions.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>✅ Condizioni</h3>
+                        <ul class="analysis-list">
+                            ${analysis.conditions.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (analysis.actions && analysis.actions.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>🎯 Azioni</h3>
+                        <ul class="analysis-list">
+                            ${analysis.actions.map(a => `<li>${a}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (analysis.suggestions && analysis.suggestions.length > 0) {
+                html += `
+                    <div class="analysis-section">
+                        <h3>💡 Suggerimenti AI</h3>
+                        <ul class="analysis-list">
+                            ${analysis.suggestions.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function showNodeDetails(node) {
+            const container = document.getElementById('node-info');
+            container.innerHTML = `
+                <div class="node-details">
+                    <h4>${node.icon} ${node.label.split('\n')[0]}</h4>
+                    <p style="color: #a0a0b0; margin-bottom: 15px;">Type: ${node.type}</p>
+                    <pre>${node.description}</pre>
+                </div>
+            `;
+        }
+
+        function fitNetwork() {
+            if (network) {
+                network.fit({
+                    animation: {
+                        duration: 1000,
+                        easingFunction: 'easeInOutQuad'
+                    }
+                });
+            }
+        }
+
+        function resetPhysics() {
+            if (network) {
+                network.setOptions({
+                    physics: {
+                        enabled: true
+                    }
+                });
+                setTimeout(() => {
+                    network.stopSimulation();
+                }, 2000);
+            }
+        }
+    
+
+        // ========================================
+        // YAML EDITOR FUNCTIONS
+        // ========================================
+
+        function openYamlEditor() {
+            console.log('📝 Apertura editor YAML...');
+            const editor = document.getElementById('yaml-editor');
+            const textarea = document.getElementById('yaml-textarea');
+            
+            if (!editor || !textarea) {
+                alert('Errore: Editor non disponibile');
+                return;
+            }
+            
+            // Carica YAML corrente
+            textarea.value = automationYAML || '# Inserisci codice YAML qui';
+            
+            // Mostra modal
+            editor.classList.add('show');
+            
+            // Focus
+            setTimeout(() => textarea.focus(), 100);
+            
+            console.log('✅ Editor aperto');
+        }
+
+        function closeYamlEditor() {
+            const editor = document.getElementById('yaml-editor');
+            if (editor) {
+                editor.classList.remove('show');
+            }
+        }
+
+        async function saveYamlChanges() {
+            console.log('💾 Salvataggio modifiche YAML...');
+            
+            const textarea = document.getElementById('yaml-textarea');
+            const newYaml = textarea.value.trim();
+            
+            if (!newYaml) {
+                alert('⚠️ Il codice YAML non può essere vuoto!');
+                return;
+            }
+            
+            // Aggiorna YAML globale
+            automationYAML = newYaml;
+            
+            // Salva in localStorage
+            localStorage.setItem('automation_for_vision', newYaml);
+            
+            // IMPORTANTE: Disabilita install dopo modifica
+            const installBtn = document.getElementById('install-btn');
+            if (installBtn) {
+                installBtn.disabled = true;
+                installBtn.classList.add('disabled');
+            }
+            
+            // Mostra warning
+            const testResults = document.getElementById('test-results');
+            if (testResults) {
+                testResults.innerHTML = `
+                    <div class="test-result" style="background: rgba(255, 165, 0, 0.15); 
+                                                     border-left-color: #ffa500; 
+                                                     color: #ffa500;">
+                        <h2>⚠️ YAML MODIFICATO</h2>
+                        <p style="font-weight: normal; color: #e0e0e0; margin-top: 10px;">
+                            Il codice è stato modificato manualmente.<br>
+                            <strong>Devi ri-testare l'automazione prima di installarla!</strong>
+                        </p>
+                    </div>
+                `;
+            }
+            
+            // Chiudi modal
+            closeYamlEditor();
+            
+            // Ricarica grafo chiamando l'API
+            try {
+                const response = await fetch('./api/visualize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ automation: automationYAML })
+                });
+
+                const data = await response.json();
+                
+                if (data.graph && data.graph.nodes) {
+                    graphData = data.graph;
+                    renderGraph(graphData);
+                    
+                    if (data.analysis) {
+                        renderAnalysis(data.analysis, graphData.info);
+                    }
+                    
+                    alert('✅ YAML aggiornato!\n\nRicorda di ri-testare prima di installare.');
+                } else {
+                    throw new Error(data.error || 'Errore parsing YAML');
+                }
+            } catch (error) {
+                alert('❌ Errore aggiornamento grafo: ' + error.message);
+                console.error(error);
+            }
+        }
+
+    </script>
+
+    <!-- YAML EDITOR MODAL -->
+    <div id="yaml-editor" class="yaml-editor">
+        <div class="yaml-editor-content">
+            <h2>✏️ Editor YAML</h2>
+            <p>Modifica il codice manualmente. Ricorda di testare dopo le modifiche!</p>
+            <textarea id="yaml-textarea" spellcheck="false"></textarea>
+            <div style="display: flex; 
+                        gap: 15px; 
+                        justify-content: center; 
+                        padding-top: 20px;
+                        border-top: 1px solid rgba(0, 217, 255, 0.2);">
+                <button class="control-btn" 
+                        onclick="closeYamlEditor()" 
+                        style="flex: 1;
+                               max-width: 200px;
+                               padding: 18px 30px;
+                               font-size: 16px;
+                               background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+                               border: none;
+                               border-radius: 12px;
+                               color: white;
+                               font-weight: 600;
+                               cursor: pointer;
+                               transition: all 0.3s;
+                               box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);">
+                    ❌ Annulla
+                </button>
+                <button class="control-btn" 
+                        onclick="saveYamlChanges()"
+                        style="flex: 1;
+                               max-width: 250px;
+                               padding: 18px 30px;
+                               font-size: 16px;
+                               background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                               border: none;
+                               border-radius: 12px;
+                               color: white;
+                               font-weight: 600;
+                               cursor: pointer;
+                               transition: all 0.3s;
+                               box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
+                    💾 Salva e Torna al Grafico
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
