@@ -1,4 +1,4 @@
-# 🤖 AI Automation Generator for Home Assistant
+# 🤖 AI Automation Generator v2.7.5 - Edizione Italiana
 
 [![GitHub](https://img.shields.io/badge/GitHub-ago1980-blue?logo=github)](https://github.com/ago19800)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue?logo=homeassistant)](https://www.home-assistant.io/)
@@ -11,6 +11,16 @@
 ---
 
 <div align="center">
+
+## ✨ Novità v2.7.3
+
+### 🆕 Editor YAML Integrato
+- **📝 Modifica manuale** del codice YAML generato
+- **✏️ Editor completo** nella pagina visualizzazione
+- **💾 Salva modifiche** e aggiorna il grafo automaticamente
+- **🔄 Ritest** dell'automazione modificata
+
+
 
 ## ☕ Supporta il Progetto
 
