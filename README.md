@@ -2,7 +2,7 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-ago19800-blue?logo=github)](https://github.com/ago19800)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue?logo=homeassistant)](https://www.home-assistant.io/)
-[![Version](https://img.shields.io/badge/version-2.7.5-green.svg)](https://github.com/ago19800/ha-ai-automation-builder)
+[![Version](https://img.shields.io/badge/version-2.7.6-green.svg)](https://github.com/ago19800/ha-ai-automation-builder)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 > **Genera automazioni Home Assistant con l'intelligenza artificiale di Google Gemini!**  
@@ -15,6 +15,7 @@
 ## ✨ Novità 2.7.5
 
 ### 🆕 Editor YAML Integrato
+- **💾 Download** esporti automazione
 - **📝 Modifica manuale** del codice YAML generato
 - **✏️ Editor completo** nella pagina visualizzazione
 - **💾 Salva modifiche** e aggiorna il grafo automaticamente
