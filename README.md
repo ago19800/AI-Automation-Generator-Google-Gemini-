@@ -1,4 +1,4 @@
-# 🤖 AI Automation Generator 2.7.6 - Edizione Italiana
+# 🤖 AI Automation Generator 2.7.7 - Edizione Italiana
 
 [![GitHub](https://img.shields.io/badge/GitHub-ago19800-blue?logo=github)](https://github.com/ago19800)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Addon-blue?logo=homeassistant)](https://www.home-assistant.io/)
@@ -12,7 +12,7 @@
 
 <div align="center">
 
-## ✨ Novità 2.7.6
+## ✨ Novità 2.7.7
 
 ### 🆕 Editor YAML Integrato
 - **💾 Download** esporti automazione
