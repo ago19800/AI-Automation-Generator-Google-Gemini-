@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔗 {{ automation.alias }} - Automazione Condivisa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d1b4e 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d9ff 0%, #7b2cbf 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .share-badge {
+            display: inline-block;
+            background: rgba(0, 217, 255, 0.2);
+            border: 2px solid #00d9ff;
+            border-radius: 30px;
+            padding: 10px 25px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .automation-card {
+            background: rgba(20, 25, 40, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .automation-card h2 {
+            color: #00d9ff;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #a0a0b0;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: rgba(10, 14, 26, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            color: #00d9ff;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: #a0a0b0;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .yaml-section {
+            margin: 30px 0;
+        }
+
+        .yaml-section h3 {
+            color: #00d9ff;
+            margin-bottom: 15px;
+        }
+
+        .yaml-code {
+            background: rgba(10, 14, 26, 0.95);
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #51cf66;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .import-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .import-section h3 {
+            color: white;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .import-btn {
+            background: white;
+            color: #28a745;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .import-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .how-to {
+            background: rgba(20, 25, 40, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .how-to h4 {
+            color: #00d9ff;
+            margin-bottom: 15px;
+        }
+
+        .how-to ol {
+            margin-left: 20px;
+            line-height: 2;
+            color: #e0e0e0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: #888;
+        }
+
+        .footer a {
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Automazione Condivisa</h1>
+            <p>Qualcuno ha condiviso un'automazione con te!</p>
+            <div class="share-badge">
+                📤 Share ID: {{ share_id }}
+            </div>
+        </div>
+
+        <div class="automation-card">
+            <h2>{{ automation.alias }}</h2>
+            
+            {% if automation.description %}
+            <p class="description">{{ automation.description }}</p>
+            {% endif %}
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value">{{ automation.trigger|length }}</div>
+                    <div class="stat-label">🔔 Trigger</div>
+                </div>
+                
+                {% if automation.condition %}
+                <div class="stat-box">
+                    <div class="stat-value">{{ automation.condition|length }}</div>
+                    <div class="stat-label">🎯 Condizioni</div>
+                </div>
+                {% endif %}
+                
+                <div class="stat-box">
+                    <div class="stat-value">{{ automation.action|length }}</div>
+                    <div class="stat-label">⚡ Azioni</div>
+                </div>
+                
+                <div class="stat-box">
+                    <div class="stat-value">{{ automation.mode }}</div>
+                    <div class="stat-label">🔄 Modalità</div>
+                </div>
+            </div>
+
+            <div class="yaml-section">
+                <h3>📋 Codice YAML:</h3>
+                <div class="yaml-code">{{ automation | tojson(indent=2) }}</div>
+            </div>
+        </div>
+
+        <div class="import-section">
+            <h3>✨ Vuoi usare questa automazione?</h3>
+            <p style="color: rgba(255,255,255,0.9); margin: 15px 0;">
+                Importala nel tuo Home Assistant con un click!
+            </p>
+            <button class="import-btn" onclick="importAutomation()">
+                📥 Importa Ora
+            </button>
+
+            <div class="how-to">
+                <h4>📖 Come funziona:</h4>
+                <ol>
+                    <li>Click "Importa Ora"</li>
+                    <li>Verifica le entità necessarie</li>
+                    <li>L'automazione verrà testata</li>
+                    <li>Se ok, verrà installata nel tuo HA!</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Creato con ❤️ usando <strong>AI Automation Generator</strong></p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/ago19800" target="_blank">@ago1980</a> •
+                <a href="https://www.paypal.com/paypalme/ago19800" target="_blank">💝 Supporta il progetto</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const automation = {{ automation | tojson }};
+        
+        function importAutomation() {
+            // Codifica automazione
+            const jsonStr = JSON.stringify(automation);
+            const encoded = btoa(jsonStr);
+            
+            // Redirect a pagina import
+            window.location.href = `/import?data=${encoded}`;
+        }
+        
+        // Copy YAML to clipboard
+        document.querySelector('.yaml-code').addEventListener('click', function() {
+            navigator.clipboard.writeText(this.textContent);
+            
+            const original = this.style.borderColor;
+            this.style.borderColor = '#28a745';
+            setTimeout(() => {
+                this.style.borderColor = original;
+            }, 300);
+            
+            // Show toast
+            showToast('📋 YAML copiato!');
+        });
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideIn 0.3s;
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+    </script>
+
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+</body>
+</html>

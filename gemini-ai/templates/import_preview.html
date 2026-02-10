@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📥 Importa Automazione</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d1b4e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d9ff 0%, #7b2cbf 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .preview-card {
+            background: rgba(20, 25, 40, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .preview-card h2 {
+            color: #00d9ff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .automation-info {
+            background: rgba(10, 14, 26, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #a0a0b0;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #00d9ff;
+        }
+
+        .yaml-preview {
+            background: rgba(10, 14, 26, 0.95);
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #51cf66;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .warning-box {
+            background: rgba(255, 165, 0, 0.1);
+            border-left: 4px solid #ffa500;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .warning-box h3 {
+            color: #ffa500;
+            margin-bottom: 10px;
+        }
+
+        .warning-box ul {
+            margin-left: 20px;
+            color: #e0e0e0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-import {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-import:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .entity-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .entity-badge {
+            background: rgba(0, 217, 255, 0.2);
+            border: 1px solid rgba(0, 217, 255, 0.4);
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9em;
+            color: #00d9ff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 217, 255, 0.1);
+            border-top: 4px solid #00d9ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>📥 Importa Automazione</h1>
+            <p>Anteprima automazione condivisa</p>
+        </div>
+
+        <div class="preview-card">
+            <h2>{{ automation.alias }}</h2>
+            
+            <div class="automation-info">
+                {% if automation.description %}
+                <div class="info-row">
+                    <span class="info-label">📝 Descrizione:</span>
+                    <span class="info-value">{{ automation.description }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="info-row">
+                    <span class="info-label">🔔 Trigger:</span>
+                    <span class="info-value">{{ automation.trigger|length }} configurati</span>
+                </div>
+                
+                {% if automation.condition %}
+                <div class="info-row">
+                    <span class="info-label">🎯 Condizioni:</span>
+                    <span class="info-value">{{ automation.condition|length }} configurate</span>
+                </div>
+                {% endif %}
+                
+                <div class="info-row">
+                    <span class="info-label">⚡ Azioni:</span>
+                    <span class="info-value">{{ automation.action|length }} configurate</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">🔄 Modalità:</span>
+                    <span class="info-value">{{ automation.mode }}</span>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Prima di importare:</h3>
+                <ul>
+                    <li>Verifica che le entità esistano nel tuo Home Assistant</li>
+                    <li>Controlla che i servizi siano disponibili</li>
+                    <li>L'automazione verrà testata prima dell'installazione</li>
+                </ul>
+            </div>
+
+            <h3 style="color: #00d9ff; margin: 20px 0;">📋 Anteprima YAML:</h3>
+            <div class="yaml-preview">{{ automation | tojson(indent=2) }}</div>
+
+            <div class="button-group">
+                <button class="btn btn-cancel" onclick="window.close()">
+                    ❌ Annulla
+                </button>
+                <button class="btn btn-import" onclick="confirmImport()">
+                    💾 Importa e Testa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function confirmImport() {
+            const automation = {{ automation | tojson }};
+            
+            // Show loading
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Importazione...';
+            
+            try {
+                const response = await fetch('/api/import/confirm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ automation: automation })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Automazione importata con successo!\n\nVai su Home Assistant per testarla.');
+                    window.location.href = '/';
+                } else {
+                    alert('❌ Errore durante l\'importazione:\n' + result.errors.join('\n'));
+                    btn.disabled = false;
+                    btn.textContent = '💾 Importa e Testa';
+                }
+                
+            } catch (error) {
+                alert('❌ Errore: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = '💾 Importa e Testa';
+            }
+        }
+    </script>
+
+</body>
+</html>
