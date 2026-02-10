@@ -3,7 +3,7 @@ version: "2.7.7"
 slug: gemini-ai
 description: Genera automazioni con AI - Versione senza login + Editor YAML
 url: https://github.com/ago19800/AI-Automation-Generator-Google-Gemini-
-changelog: https://github.com/ago19800/AI-Automation-Generator-Google-Gemini-/blob/main/CHANGELOG.md
+changelog: https://github.com/ago19800/AI-Automation-Generator-Google-Gemini-/blob/main/gemini-ai/CHANGELOG.md
 arch:
   - armhf
   - armv7
