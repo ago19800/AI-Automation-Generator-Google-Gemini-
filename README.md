@@ -12,7 +12,7 @@
 
 <div align="center">
 
-## ✨ Novità 2.7.5
+## ✨ Novità 2.7.6
 
 ### 🆕 Editor YAML Integrato
 - **💾 Download** esporti automazione
